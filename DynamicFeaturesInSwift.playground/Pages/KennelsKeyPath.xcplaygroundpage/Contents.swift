@@ -34,7 +34,13 @@ class Kennels: NSObject {
 let kennels = Kennels()
 
 // ☆ Add KeyPath here.
+let keyPath = \Kennels.available
 
 // ☆ Add observe method call here.
+kennels.observe(keyPath) { kennels, change in
+    if (kennels.available) {
+        print("kennels are available")
+    }
+}
 
 kennels.available = true

@@ -30,15 +30,31 @@ import Foundation
 // @dynamicMemberLookup is a Swift 4.2 attribute.
 // It requires the subscript(dynamicMember:) be implemented.
 
-//@dynamicMemberLookup // ☆ Uncomment this line
+@dynamicMemberLookup // ☆ Uncomment this line
 class Dog {
   
   enum Direction: String { case left, right, motionless }
   
   // ☆ Add subscript method that returns a Direction here.
-  
+    subscript(dynamicMember member: String) -> Direction {
+        if member == "moving" || member == "directionOfMovement" {
+            // Here's where you would call the motion detection library
+            // that's in another programming language such as Python
+            return randomDirection()
+        }
+        return .motionless
+    }
+
   // ☆ Add subscript method that returns an Int here.
-  
+    subscript(dynamicMember member: String) -> Int {
+        if member == "speed" {
+            // Here's where you would call the motion detection library
+            // that's in another programming language such as Python.
+            return 12
+        }
+        return 0
+    }
+
   private func randomDirection() -> Direction {
     return Bool.random() ? .right : .left
   }
@@ -47,8 +63,16 @@ class Dog {
 let dynamicDog = Dog()
 
 // ☆ Use the dynamicMemberLookup feature for dynamicDog here.
+let directionOfMove: Dog.Direction = dynamicDog.directionOfMovement
+print("Dog's direction of movement is \(directionOfMove).")
 
-//@dynamicMemberLookup // ☆ Uncomment this line
+let movingDirection: Dog.Direction = dynamicDog.moving
+print("Dog is moving \(movingDirection).")
+
+let speed: Int = dynamicDog.speed
+print("Dog's speed is \(speed).")
+
+@dynamicMemberLookup // ☆ Uncomment this line
 struct JSONDogCatcher {
   
   private var storedString: String?
@@ -69,7 +93,10 @@ struct JSONDogCatcher {
   
   // ☆ Add subscript(dynamicMember:) method that returns a
   // JSONDogCatcher here.
-  
+    subscript(dynamicMember member: String) -> JSONDogCatcher? {
+        return self[member]
+    }
+    
   // Traditional way that supports catcher["owner"] syntax.
   
   subscript(key: String) -> JSONDogCatcher? {
@@ -116,3 +143,8 @@ print("Owner's name extracted in a less readable way is \(messyName).")
 
 // ☆ Use dot notation to get the owner's name and speed through the
 // catcher.
+let ownerName: String = catcher.owner?.name?.value() ?? ""
+print("Owner's name is \(ownerName).")
+
+let dogSpeed: Int = catcher.speed?.value() ?? 0
+print("Dog's speed is \(dogSpeed).")

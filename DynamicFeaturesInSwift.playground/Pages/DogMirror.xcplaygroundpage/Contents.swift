@@ -45,7 +45,8 @@ class DogCatcherNet {
   let customerReviewStars: CustomerReviewStars
   let weightInPounds: Double
   // ☆ Add Optional called dog of type Dog here
-  
+  var dog: Dog?
+
   init(stars: CustomerReviewStars, weight: Double) {
     customerReviewStars = stars
     weightInPounds = weight
@@ -61,6 +62,12 @@ print()
 
 // MARK: - CustomDebugStringConvertible
 // ☆ Add Conformance to CustomDebugStringConvertible for DogCatcherNet here
+extension DogCatcherNet: CustomDebugStringConvertible {
+    var debugDescription: String {
+        return "DogCatcherNet(Review Stars: \(customerReviewStars),"
+            + " Weight: \(weightInPounds))"
+    }
+}
 
 dump(net)
 print()
@@ -71,13 +78,37 @@ print()
 // More advanced output customization for the type and its properties.
 
 // ☆ Create log function here
+func log(itemToMirror: Any) {
+    let mirror = Mirror(reflecting: itemToMirror)
+    debugPrint("Type: 🐶 \(type(of: itemToMirror)) 🐶 ")
+    for case let (label?, value) in mirror.children {
+        debugPrint("⭐ \(label): \(value) ⭐")
+    }
 
-//net.dog = Dog() // ☆ Uncomment assigning the dog
+}
+
+net.dog = Dog() // ☆ Uncomment assigning the dog
 
 // ☆ Log out the net and a Date object here
+log(itemToMirror: net)
+log(itemToMirror: Date())
 
 // CustomReflectable empowers you to control what is output and
 // what text labels to associate with the displayed values.
 
 // MARK: - CustomReflectable
 // ☆ Add Conformance to CustomReflectable for DogCatcherNet here
+extension DogCatcherNet: CustomReflectable {
+    public var customMirror: Mirror {
+        return Mirror(DogCatcherNet.self,
+                      children: ["Customer Review Stars": customerReviewStars,
+                                 "dog": dog ?? "",
+                                 "Dog name": dog?.name ?? "No name"
+                                 ],
+                      displayStyle: .class, ancestorRepresentation: .generated)
+    }
+}
+let netMirror = Mirror(reflecting: net)
+
+print ("The dog in the net is \(netMirror.descendant("dog", "name") ?? "nonexistent")")
+print ("The age of the dog is \(netMirror.descendant("dog", "age") ?? "nonexistent")")
